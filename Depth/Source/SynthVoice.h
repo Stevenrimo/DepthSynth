@@ -23,5 +23,19 @@ public:
     void pitchWheelMoved(int newPitchWheelValue) override;
     void controllerMoved(int controllerNumber, int newControllerValue) override;
     void renderNextBlock(juce::AudioBuffer< float >& outputBuffer, int startSample, int numSamples) override;
+    void prepareToPlay(double sampleRate, int samplesPerBlock,int outputChannels);
+
+private:
+    juce::ADSR adsr;
+    juce::ADSR::Parameters adsrParams;  
+
+    juce::dsp::Oscillator<float> osc{ [](float x) {return x < 0.0f ? -1 : 1.0f;} };
+    juce::dsp::Gain<float> gain;
+    //check to see that our audio callback has been created 
+    bool isPrepared { false };
+
+    //return std::sin(x);       //Sine Wave
+    //return x / MathConstants<float>::pi //Saw Wave
+    //return x < 0.0f ? -1 : 1.0f; //Square Wave
 
 };
