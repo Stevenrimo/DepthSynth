@@ -159,12 +159,32 @@ void DepthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
 
     for (int i = 0; i < synth.getNumVoices(); i++)
     {
-        if (auto voice = dynamic_cast<juce::SynthesiserVoice*>(synth.getVoice(i)))
+        // checks to see if the voice can be cased into a SynthVoice
+        if (auto voice = dynamic_cast<SynthVoice*>(synth.getVoice(i)))
         {
-            //In here goes 
-            //Osc controls
-            //ADSR
-            //LFO
+     
+            // TODO Osc controls
+            // ADSR
+            // uses the identifier of the value tree states to get the Raw (Atomic Float) value of the ADSR 
+            auto& rAttack = *apvts.getRawParameterValue("ATTACK");
+            auto& rDecay = *apvts.getRawParameterValue("DECAY");
+            auto& rSustain = *apvts.getRawParameterValue("SUSTAIN");
+            auto& rRelease = *apvts.getRawParameterValue("RELEASE");
+
+            // updates the adsr with the current values from the valueTree, useing load because the floats are atomic floats and this saves time 
+            voice->update(rAttack.load(),rDecay.load(),rSustain.load(),rRelease.load());
+
+
+            //TODO LFO
+        }
+    }
+
+    // Logs timestamp of each midimessage that be used for debugging purposes
+    for (const juce::MidiMessageMetadata metadata : midiMessages)
+    {
+        if (metadata.numBytes == 3)
+        {
+            juce::Logger::writeToLog("TimeStamp: " + juce::String(metadata.getMessage().getTimeStamp()));
         }
     }
 
@@ -220,13 +240,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout DepthAudioProcessor::createP
 
     // ADSR parameters
     // Attack
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("ATTACK", "Attack", juce::NormalisableRange<float> {0.1f, 1.0f, }, 0.1f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("ATTACK", "Attack", juce::NormalisableRange<float> {0.2f, 1.0f, 0.1f }, 0.1f));
     // Decay 
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("DECAY", "Decay", juce::NormalisableRange<float> {0.1f, 1.0f, }, 0.1f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("DECAY", "Decay", juce::NormalisableRange<float> {0.1f, 1.0f, 0.1f}, 0.1f));
     // Sustain - Default of 1 so that as long as the user is holding down the note it will continue to play
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN", "Sustain", juce::NormalisableRange<float> {0.1f, 1.0f, }, 1.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN", "Sustain", juce::NormalisableRange<float> {0.1f, 1.0f, 0.1f}, 1.0f));
     //Release - set release to be up to 3 seconds long 
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("RELEASE", "Release", juce::NormalisableRange<float> {0.1f, 3.0f, }, 0.4f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("RELEASE", "Release", juce::NormalisableRange<float> {0.1f, 3.0f, 0.1f }, 0.4f));
 
     return { params.begin(), params.end() };
 }

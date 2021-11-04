@@ -24,6 +24,11 @@ void SynthVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesiser
 void SynthVoice::stopNote(float velocity, bool allowTailOff)
 {
     adsr.noteOff();
+
+    if ((!allowTailOff) || (!adsr.isActive()))
+    {
+        clearCurrentNote();
+    }
 }
 
 void SynthVoice::pitchWheelMoved(int newPitchWheelValue)
@@ -39,11 +44,39 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
     // If prepareToPlay has not been called will throw an error
     jassert(isPrepared);
 
-    juce::dsp::AudioBlock<float> audioBlock{ outputBuffer };
-    osc.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
-    gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
+    // If there are no voices active there is no need to do this processsing and we will return out of this funciton
+    if (isVoiceActive())
+    {
+        // Setting size of synth buffer
+        synthBuffer.setSize(outputBuffer.getNumChannels(), numSamples, false, false, true);
+        // Need to clear the buffer everytime we render a new block 
+        synthBuffer.clear();
 
-    adsr.applyEnvelopeToBuffer(outputBuffer, startSample, numSamples);
+        juce::dsp::AudioBlock<float> audioBlock{ outputBuffer };
+        osc.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
+        gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
+
+        adsr.applyEnvelopeToBuffer(synthBuffer, 0, synthBuffer.getNumSamples());
+
+        // will pause the plugin: can uncomment for debugging 
+        //if (startsample != 0)
+        //{
+        //    jassertfalse;
+        //}
+
+        // iterates through channels 
+        for (int channel = 0; channel < outputBuffer.getNumChannels(); channel++)
+        {
+            outputBuffer.addFrom(channel, startSample, synthBuffer, channel, 0, numSamples);
+
+            // If there is no more input we stop 
+            if (!adsr.isActive())
+            {
+                clearCurrentNote();
+            }
+        }
+    }
+
 }
 
 void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outputChannels)
@@ -58,8 +91,13 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     osc.prepare(spec);
     gain.prepare(spec);
 
-    
-    gain.setGainLinear(0.01f);
+    // Set the overall gain/ volume for the synth 
+    gain.setGainLinear(0.03f);
 
     isPrepared = true;
+}
+
+void SynthVoice::update(const float fAttack, const float fDecay, const float fSustain, const float fRelease)
+{
+    adsr.updateADSR(fAttack, fDecay, fSustain, fRelease);
 }
