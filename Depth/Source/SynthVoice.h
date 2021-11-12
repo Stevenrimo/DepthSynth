@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "SynthSound.h"
 #include "DataProccesing/AdsrData.h"
+#include "DataProccesing/OscData.h"
 
 class SynthVoice : public juce::SynthesiserVoice
 {
@@ -26,6 +27,7 @@ public:
     void renderNextBlock(juce::AudioBuffer< float >& outputBuffer, int startSample, int numSamples) override;
     void prepareToPlay(double sampleRate, int samplesPerBlock,int outputChannels);
     void update(const float attack, const float decay, const float sustain, const float release);
+    OscData& getOscillator() { return osc; }
 
 private:
     AdsrData adsr;
@@ -33,13 +35,9 @@ private:
     // By using this synth buffer we are able to remove an issue that cause a clicking sound when a MIDI was pressed 
     juce::AudioBuffer<float> synthBuffer;
 
-    juce::dsp::Oscillator<float> osc{ [](float x) {return x / juce::MathConstants<float>::pi; } };
+    OscData osc;
+    // juce::dsp::Oscillator<float> osc{ [](float x) {return x / juce::MathConstants<float>::pi; } };
     juce::dsp::Gain<float> gain;
     //check to see that our audio callback has been created 
     bool isPrepared { false };
-
-    //return std::sin(x);       //Sine Wave
-    //return x / juce::MathConstants<float>::pi; //Saw Wave
-    //return x < 0.0f ? -1 : 1.0f; //Square Wave
-
 };

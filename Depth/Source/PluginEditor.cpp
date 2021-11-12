@@ -11,16 +11,17 @@
 
 //==============================================================================
 DepthAudioProcessorEditor::DepthAudioProcessorEditor (DepthAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), adsr (audioProcessor.apvts)
+    : AudioProcessorEditor (&p), audioProcessor (p),osc(audioProcessor.apvts, "OSC1WAVETYPE"), adsr (audioProcessor.apvts)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (800, 400);
 
-    oscSelectorAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.apvts, "OSC", oscSelector);
-
     // Make adsr visable
     addAndMakeVisible(adsr);
+
+    // make osc1 selector 
+    addAndMakeVisible(osc);
 }
 
 DepthAudioProcessorEditor::~DepthAudioProcessorEditor()
@@ -43,7 +44,10 @@ void DepthAudioProcessorEditor::paint (juce::Graphics& g)
 void DepthAudioProcessorEditor::resized()
 {
     // set adsr bounds
-    adsr.setBounds(0, 0, getWidth() /2, getHeight());
+    adsr.setBounds(0, 0, getWidth() / 2, getHeight());
+    // sets osc bounds
+    osc.setBounds(10, 10, 100, 30);
+
 }
 
 

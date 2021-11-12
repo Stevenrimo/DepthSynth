@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "UI/AdsrComponent.h"
+#include "UI/OscComponent.h"
 
 //==============================================================================
 /**
@@ -26,18 +27,12 @@ public:
     void resized() override;
 
 private:
-
-
-    // Combobox for selecting oscilattor waveform
-    juce::ComboBox oscSelector;
-
-    //unique pointer that will be used to map the GUI comboBox to the internal AudioProcessValueTreeState controls
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> oscSelectorAttachment; 
-
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     DepthAudioProcessor& audioProcessor;
-
+    // Instance of our internal OscComponent UI class
+    OscComponent osc;
+    // Instance of our internal adsrComponent UI class
     AdsrComponent adsr;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DepthAudioProcessorEditor)

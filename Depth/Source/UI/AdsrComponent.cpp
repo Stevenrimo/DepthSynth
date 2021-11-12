@@ -41,7 +41,7 @@ AdsrComponent::~AdsrComponent()
 
 void AdsrComponent::paint (juce::Graphics& g)
 {
-
+    g.fillAll(juce::Colours::transparentBlack);
 }
 
 void AdsrComponent::resized()

@@ -106,6 +106,7 @@ void DepthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
         if (auto voice = dynamic_cast<SynthVoice*>(synth.getVoice(i)))
         {
             voice->prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
+            
         }
     }
 }
@@ -171,9 +172,14 @@ void DepthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
             auto& rSustain = *apvts.getRawParameterValue("SUSTAIN");
             auto& rRelease = *apvts.getRawParameterValue("RELEASE");
 
+            // gets the wave type of the oscillator 1 
+            auto& rOscWaveType = *apvts.getRawParameterValue("OSC1WAVETYPE");
+
             // updates the adsr with the current values from the valueTree, useing load because the floats are atomic floats and this saves time 
             voice->update(rAttack.load(),rDecay.load(),rSustain.load(),rRelease.load());
 
+            // updates the oscillator class to use the selected wave type
+            voice->getOscillator().setWaveType(rOscWaveType);
 
             //TODO LFO
         }
@@ -247,6 +253,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout DepthAudioProcessor::createP
     params.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN", "Sustain", juce::NormalisableRange<float> {0.1f, 1.0f, 0.1f}, 1.0f));
     //Release - set release to be up to 3 seconds long 
     params.push_back(std::make_unique<juce::AudioParameterFloat>("RELEASE", "Release", juce::NormalisableRange<float> {0.1f, 3.0f, 0.1f }, 0.4f));
+
+    // Oscillator 1 selector 
+    params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC1WAVETYPE", "Osc 1 Wave Type", juce::StringArray{ "Sine","Saw","Square" }, 0));
+
 
     return { params.begin(), params.end() };
 }
