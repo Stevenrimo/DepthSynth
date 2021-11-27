@@ -30,7 +30,10 @@ OscComponent::~OscComponent()
 void OscComponent::paint (juce::Graphics& g)
 {
     // sets background color to black 
-    g.fillAll(juce::Colours::black);
+    g.fillAll(juce::Colours:: brown);
+    g.setFont(juce::Font("High Tower Text", 20.0f, juce::Font::bold));
+    // TODO place at top of the combobox
+    g.drawText("Oscillator 1",10,15,100,25, false);
 }
 
 void OscComponent::resized()
@@ -41,9 +44,9 @@ void OscComponent::resized()
     const auto padding = 10;
 
     //If these elements are changed it will efffect all osc Selectors 
-    const auto comboBoxStartX = 0;
-    const auto comboBoxStartY = 0;
-    const auto comboBoxWidth = 90;//bounds.getWidth() / 4 - padding;
+    const auto comboBoxStartX = 0 + padding;
+    const auto comboBoxStartY = 40 + padding;
+    const auto comboBoxWidth = 200;//bounds.getWidth() / 4 - padding;
     const auto comboBoxHeight = 20;//bounds.getHeight() / 4 - padding;
     // sets position of osc selector 
     oscWaveSelector.setBounds(comboBoxStartX, comboBoxStartY, comboBoxWidth, comboBoxHeight);

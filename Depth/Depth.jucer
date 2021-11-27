@@ -5,6 +5,7 @@
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
   <MAINGROUP id="Q5jNtk" name="Depth">
     <GROUP id="{45E5944D-01C4-542D-0109-5B886860C2D5}" name="Source">
+      <FILE id="drxG1E" name="Common.h" compile="0" resource="0" file="Source/Common.h"/>
       <FILE id="nMH5Ky" name="SynthSound.h" compile="0" resource="0" file="Source/SynthSound.h"/>
       <FILE id="aijV8j" name="SynthVoice.cpp" compile="1" resource="0" file="Source/SynthVoice.cpp"/>
       <FILE id="RP2485" name="SynthVoice.h" compile="0" resource="0" file="Source/SynthVoice.h"/>
@@ -19,6 +20,8 @@
     <GROUP id="{14046FC1-EFFF-FE34-20F3-B4A725AB8262}" name="DataProccesing">
       <FILE id="tQ1aJA" name="AdsrData.cpp" compile="1" resource="0" file="Source/DataProccesing/AdsrData.cpp"/>
       <FILE id="TzWLiB" name="AdsrData.h" compile="0" resource="0" file="Source/DataProccesing/AdsrData.h"/>
+      <FILE id="CXGKCt" name="FilterData.cpp" compile="1" resource="0" file="Source/DataProccesing/FilterData.cpp"/>
+      <FILE id="X6Xwob" name="FilterData.h" compile="0" resource="0" file="Source/DataProccesing/FilterData.h"/>
       <FILE id="OSuSm2" name="OscData.cpp" compile="1" resource="0" file="Source/DataProccesing/OscData.cpp"/>
       <FILE id="azymrX" name="OscData.h" compile="0" resource="0" file="Source/DataProccesing/OscData.h"/>
     </GROUP>
@@ -26,6 +29,10 @@
       <FILE id="pdGdFr" name="AdsrComponent.cpp" compile="1" resource="0"
             file="Source/UI/AdsrComponent.cpp"/>
       <FILE id="bbxvAz" name="AdsrComponent.h" compile="0" resource="0" file="Source/UI/AdsrComponent.h"/>
+      <FILE id="v2GPPZ" name="FilterComponent.cpp" compile="1" resource="0"
+            file="Source/UI/FilterComponent.cpp"/>
+      <FILE id="pmJVJY" name="FilterComponent.h" compile="0" resource="0"
+            file="Source/UI/FilterComponent.h"/>
       <FILE id="eGlNM8" name="OscComponent.cpp" compile="1" resource="0"
             file="Source/UI/OscComponent.cpp"/>
       <FILE id="bKa8ok" name="OscComponent.h" compile="0" resource="0" file="Source/UI/OscComponent.h"/>

@@ -14,6 +14,7 @@
 #include "SynthSound.h"
 #include "DataProccesing/AdsrData.h"
 #include "DataProccesing/OscData.h"
+#include "DataProccesing/FilterData.h"
 
 class SynthVoice : public juce::SynthesiserVoice
 {
@@ -35,6 +36,7 @@ private:
     // By using this synth buffer we are able to remove an issue that cause a clicking sound when a MIDI was pressed 
     juce::AudioBuffer<float> synthBuffer;
 
+    FilterData filter;
     OscData osc;
     // juce::dsp::Oscillator<float> osc{ [](float x) {return x / juce::MathConstants<float>::pi; } };
     juce::dsp::Gain<float> gain;

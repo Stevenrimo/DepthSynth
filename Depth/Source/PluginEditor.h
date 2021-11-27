@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 #include "UI/AdsrComponent.h"
 #include "UI/OscComponent.h"
+#include "UI/FilterComponent.h"
 
 //==============================================================================
 /**
@@ -34,6 +35,8 @@ private:
     OscComponent osc;
     // Instance of our internal adsrComponent UI class
     AdsrComponent adsr;
+    // Instance of our internal filterComponent UI class
+    FilterComponent filter;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DepthAudioProcessorEditor)
 };

@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "SynthSound.h"
 #include "SynthVoice.h"
+#include "DataProccesing/FilterData.h"
 
 //==============================================================================
 /**
@@ -56,11 +57,12 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     juce::AudioProcessorValueTreeState apvts;
-    juce::AudioProcessorValueTreeState::ParameterLayout createParams();
+    
 
 private:
     juce::Synthesiser synth;
-    
+    juce::AudioProcessorValueTreeState::ParameterLayout createParams();
+    FilterData filter;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DepthAudioProcessor)

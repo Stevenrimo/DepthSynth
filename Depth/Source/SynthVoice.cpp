@@ -92,7 +92,7 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     gain.prepare(spec);
 
     // Set the overall gain/ volume for the synth 
-    gain.setGainLinear(0.03f);
+    gain.setGainLinear(0.04f);
 
     isPrepared = true;
 }
@@ -100,4 +100,5 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
 void SynthVoice::update(const float fAttack, const float fDecay, const float fSustain, const float fRelease)
 {
     adsr.updateADSR(fAttack, fDecay, fSustain, fRelease);
+    //filter.updateParameters(
 }

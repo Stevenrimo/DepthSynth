@@ -11,7 +11,7 @@
 
 //==============================================================================
 DepthAudioProcessorEditor::DepthAudioProcessorEditor (DepthAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p),osc(audioProcessor.apvts, "OSC1WAVETYPE"), adsr (audioProcessor.apvts)
+    : AudioProcessorEditor (&p), audioProcessor (p),osc(audioProcessor.apvts, "OSC1WAVETYPE"), adsr (audioProcessor.apvts), filter(audioProcessor.apvts,"FILTERTYPE")
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -22,6 +22,9 @@ DepthAudioProcessorEditor::DepthAudioProcessorEditor (DepthAudioProcessor& p)
 
     // make osc1 selector 
     addAndMakeVisible(osc);
+
+    //make filter visable
+    addAndMakeVisible(filter);
 }
 
 DepthAudioProcessorEditor::~DepthAudioProcessorEditor()
@@ -35,7 +38,7 @@ void DepthAudioProcessorEditor::paint (juce::Graphics& g)
     //g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 
     g.fillAll(juce::Colours::black);
-
+ 
     //g.setColour (juce::Colours::white);
     //g.setFont (15.0f);
     //g.drawFittedText ("Welcome To Depth!", getLocalBounds(), juce::Justification::centred, 1);
@@ -46,7 +49,9 @@ void DepthAudioProcessorEditor::resized()
     // set adsr bounds
     adsr.setBounds(0, 0, getWidth() / 2, getHeight());
     // sets osc bounds
-    osc.setBounds(10, 10, 100, 30);
+    osc.setBounds(0, 0, getWidth() / 2, getHeight()/2);
+    // sets filters bounds
+    filter.setBounds(400, 0, getWidth() / 2, getHeight());
 
 }
 

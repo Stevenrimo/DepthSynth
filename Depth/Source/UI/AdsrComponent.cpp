@@ -24,13 +24,13 @@ AdsrComponent::AdsrComponent(juce::AudioProcessorValueTreeState& rApvts)
     releaseAttachment = std::make_unique<SliderAttachment>(rApvts, "RELEASE", releaseSlider);
 
     // Creates the sliders on the GUI Interface
-    std::string sAttack = "Attack";
+    juce::String sAttack = "Attack";
     setSliderParams(attackSlider, sAttack);
-    std::string sDecay = "Decay";
+    juce::String sDecay = "Decay";
     setSliderParams(decaySlider, sDecay);
-    std::string sSustain = "Sustain";
+    juce::String sSustain = "Sustain";
     setSliderParams(sustainSlider, sSustain);
-    std::string sRelease = "Release";
+    juce::String sRelease = "Release";
     setSliderParams(releaseSlider, sRelease);
 
 }
@@ -41,7 +41,18 @@ AdsrComponent::~AdsrComponent()
 
 void AdsrComponent::paint (juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::transparentBlack);
+    g.fillAll(juce::Colours::green);
+    //g.setColour(juce::Colours::sandybrown);
+    //g.drawRect(0, 0, getLocalBounds().getWidth(), getLocalBounds,getHeight(), 3);
+    g.setFont(juce::Font("High Tower Text", 20.0f, juce::Font::bold));
+    // TODO place at top of the combobox
+    g.drawText("Envelope", 10, 215, 100, 25, false);
+    // setting the font to be smaller for slider labels
+    g.setFont(juce::Font("High Tower Text", 15.0f, juce::Font::bold));
+    g.drawText("Attack", 25, 240, 50, 50, false);
+    g.drawText("Decay", 120, 240, 50, 50, false);
+    g.drawText("Sustain", 215, 240, 50, 50, false);
+    g.drawText("Release", 310, 240, 50, 50, false);
 }
 
 void AdsrComponent::resized()
@@ -53,7 +64,7 @@ void AdsrComponent::resized()
 
     //If these elements are changed it will efffect all slider elements 
     const auto sliderWidth = bounds.getWidth() / 4 - padding;
-    const auto sliderHeight = bounds.getHeight() / 3 - padding;
+    const auto sliderHeight = bounds.getHeight() / 3.5 - padding;
     const auto sliderStartX = 0;
     const auto sliderStartY = bounds.getHeight() - sliderHeight - padding; //- (sliderHeight / 4);
 
@@ -65,14 +76,18 @@ void AdsrComponent::resized()
 
 }
 
-void AdsrComponent::setSliderParams(juce::Slider& rSlider, std::string& rKnob)
+void AdsrComponent::setSliderParams(juce::Slider& rSlider, juce::String& rKnob)
 {
     rSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     rSlider.setColour(juce::Slider::ColourIds::rotarySliderFillColourId, juce::Colours::forestgreen);
     //rSlider.setColour(juce::Slider::ColourIds::rotarySliderOutlineColourId, juce::Colours::forestgreen);
     rSlider.setColour(juce::Slider::ColourIds::thumbColourId, juce::Colours::purple);
-    rSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 25);
+    rSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 25);
     //rSlider.setHelpText(rKnob);
-    rSlider.setTextValueSuffix(rKnob);
+    //rSlider.setHelpText(rKnob)
+    label.setFont(juce::Font("High Tower Text", 20.0f, juce::Font::bold));
+    label.setText(rKnob, juce::dontSendNotification);
+    label.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(label);
     addAndMakeVisible(rSlider);
 }
