@@ -41,11 +41,12 @@ AdsrComponent::~AdsrComponent()
 
 void AdsrComponent::paint (juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::green);
+    g.fillAll(juce::Colours::black);
     //g.setColour(juce::Colours::sandybrown);
     //g.drawRect(0, 0, getLocalBounds().getWidth(), getLocalBounds,getHeight(), 3);
     g.setFont(juce::Font("High Tower Text", 20.0f, juce::Font::bold));
     // TODO place at top of the combobox
+    g.setColour(juce::Colours::white);
     g.drawText("Envelope", 10, 215, 100, 25, false);
     // setting the font to be smaller for slider labels
     g.setFont(juce::Font("High Tower Text", 15.0f, juce::Font::bold));

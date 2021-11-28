@@ -28,18 +28,21 @@ public:
     void renderNextBlock(juce::AudioBuffer< float >& outputBuffer, int startSample, int numSamples) override;
     void prepareToPlay(double sampleRate, int samplesPerBlock,int outputChannels);
     void update(const float attack, const float decay, const float sustain, const float release);
-    OscData& getOscillator() { return osc; }
+    OscData& getOscillator() { return osc1; }
+    AdsrData& getAdsr() { return adsr; }
 
 private:
+    // Instance of user made classes 
     AdsrData adsr;
+    FilterData filter;
+    OscData osc1;
+    OscData FMosc;
     // Need to make a second audio buffer to load the synth data into instead of using the output buffer directly
     // By using this synth buffer we are able to remove an issue that cause a clicking sound when a MIDI was pressed 
     juce::AudioBuffer<float> synthBuffer;
 
-    FilterData filter;
-    OscData osc;
-    // juce::dsp::Oscillator<float> osc{ [](float x) {return x / juce::MathConstants<float>::pi; } };
     juce::dsp::Gain<float> gain;
+
     //check to see that our audio callback has been created 
     bool isPrepared { false };
 };

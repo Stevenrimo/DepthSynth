@@ -17,7 +17,7 @@ bool SynthVoice::canPlaySound(juce::SynthesiserSound* sound)
 
 void SynthVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition)
 {
-    osc.setWaveFrequency(midiNoteNumber);
+    osc1.setWaveFrequency(midiNoteNumber);
     adsr.noteOn();
 }
 
@@ -52,8 +52,8 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int sta
         // Need to clear the buffer everytime we render a new block 
         synthBuffer.clear();
 
-        juce::dsp::AudioBlock<float> audioBlock{ outputBuffer };
-        osc.getNextAudioBlock(audioBlock);
+        juce::dsp::AudioBlock<float> audioBlock{ synthBuffer };
+        osc1.getNextAudioBlock(audioBlock);
         gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
 
         adsr.applyEnvelopeToBuffer(synthBuffer, 0, synthBuffer.getNumSamples());
@@ -88,7 +88,7 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     spec.sampleRate = sampleRate;
     spec.numChannels = outputChannels;
 
-    osc.prepareToPlay(spec);
+    osc1.prepareToPlay(spec);
     gain.prepare(spec);
 
     // Set the overall gain/ volume for the synth 

@@ -42,9 +42,10 @@ FilterComponent::~FilterComponent()
 void FilterComponent::paint (juce::Graphics& g)
 {
     // sets background color to black 
-    g.fillAll(juce::Colours::purple);
+    g.fillAll(juce::Colours::black);
     g.setFont(juce::Font("High Tower Text", 20.0f, juce::Font::bold));
     // TODO place at top of the combobox
+    g.setColour(juce::Colours::white);
     g.drawText("Filter", 10, 15, 100, 25, false);
 }
 
@@ -76,7 +77,7 @@ void FilterComponent::setSliderParams(juce::Slider& rSlider, std::string& rKnob)
     rSlider.setColour(juce::Slider::ColourIds::rotarySliderFillColourId, juce::Colours::forestgreen);
     //rSlider.setColour(juce::Slider::ColourIds::rotarySliderOutlineColourId, juce::Colours::forestgreen);
     rSlider.setColour(juce::Slider::ColourIds::thumbColourId, juce::Colours::purple);
-    rSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 25);
+    rSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 75, 25);
     //rSlider.setHelpText(rKnob);
     rSlider.setTextValueSuffix(rKnob);
     addAndMakeVisible(rSlider);

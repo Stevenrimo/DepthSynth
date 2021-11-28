@@ -159,41 +159,41 @@ void DepthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-
-    for (int i = 0; i < synth.getNumVoices(); i++)
     {
-        // checks to see if the voice can be cased into a SynthVoice
-        if (auto voice = dynamic_cast<SynthVoice*>(synth.getVoice(i)))
+        for (int i = 0; i < synth.getNumVoices(); i++)
         {
-     
-            // TODO Osc controls
-            // ADSR
-            // uses the identifier of the value tree states to get the Raw (Atomic Float) value of the ADSR 
-            auto& rAttack = *apvts.getRawParameterValue("ATTACK");
-            auto& rDecay = *apvts.getRawParameterValue("DECAY");
-            auto& rSustain = *apvts.getRawParameterValue("SUSTAIN");
-            auto& rRelease = *apvts.getRawParameterValue("RELEASE");
+            // checks to see if the voice can be cased into a SynthVoice
+            if (auto voice = dynamic_cast<SynthVoice*>(synth.getVoice(i)))
+            {
 
-            // gets the wave type of the oscillator 1 
-            auto& rOsc1WaveType = *apvts.getRawParameterValue("OSC1WAVETYPE");
-            auto& rOsc2WaveType = *apvts.getRawParameterValue("OSC2WAVETYPE");
+                // TODO Osc controls
+                // ADSR
+                // uses the identifier of the value tree states to get the Raw (Atomic Float) value of the ADSR 
+                auto& rAttack = *apvts.getRawParameterValue("ATTACK");
+                auto& rDecay = *apvts.getRawParameterValue("DECAY");
+                auto& rSustain = *apvts.getRawParameterValue("SUSTAIN");
+                auto& rRelease = *apvts.getRawParameterValue("RELEASE");
 
-            // gets the paramters for FM
-            auto& rDepth = *apvts.getRawParameterValue("FMDEPTH");
-            auto& rFreq = *apvts.getRawParameterValue("FMFREQ");
+                // gets the wave type of the oscillator 1 
+                auto& rOsc1WaveType = *apvts.getRawParameterValue("OSC1WAVETYPE");
+               // auto& rOsc2WaveType = *apvts.getRawParameterValue("OSC2WAVETYPE");
 
-            // updates the oscillator class to use the selected wave type
-            voice->getOscillator().setWaveType(rOsc1WaveType);
-            voice->getOscillator().setWaveType(rOsc2WaveType);
-            // updates the FM parameters
-            voice->getOscillator().setFMParams(rDepth, rFreq);
-            // updates the adsr with the current values from the valueTree, useing load because the floats are atomic floats and this saves time 
-            voice->update(rAttack.load(),rDecay.load(),rSustain.load(),rRelease.load());
+                // gets the paramters for FM
+                auto& rDepth = *apvts.getRawParameterValue("FMDEPTH");
+                auto& rFreq = *apvts.getRawParameterValue("FMFREQ");
 
-            //TODO LFO
+                // updates the oscillator class to use the selected wave type
+                voice->getOscillator().setWaveType(rOsc1WaveType);
+               // voice->getOscillator().setWaveType(rOsc2WaveType);
+                // updates the FM parameters
+                voice->getOscillator().setFMParams(rDepth, rFreq);
+                // updates the adsr with the current values from the valueTree, useing load because the floats are atomic floats and this saves time 
+                voice->getAdsr().updateADSR(rAttack.load(), rDecay.load(), rSustain.load(), rRelease.load());
+
+                //TODO LFO
+            }
         }
     }
-
     // Logs timestamp of each midimessage that be used for debugging purposes
     for (const juce::MidiMessageMetadata metadata : midiMessages)
     {
@@ -268,19 +268,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout DepthAudioProcessor::createP
 
     // FM 
     // FM frequency 
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("FMFREQ", "FM Frequency", juce::NormalisableRange<float> {0.0f, 1000.0f, }, 5.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FMFREQ", "FM Frequency", juce::NormalisableRange<float> {0.0f, 1000.0f, 0.01f, 0.3f}, 0.0f));
     // FM Depth 
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("FMDEPTH", "FM Depth", juce::NormalisableRange<float> {0.0f, 1000.0f, }, 500.0f));
-
-    // ADSR parameters
-    // Attack
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("ATTACK", "Attack", juce::NormalisableRange<float> {0.1f, 1.0f, 0.1f }, 0.1f));
-    // Decay 
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("DECAY", "Decay", juce::NormalisableRange<float> {0.1f, 1.0f, 0.1f}, 0.1f));
-    // Sustain - Default of 1 so that as long as the user is holding down the note it will continue to play
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN", "Sustain", juce::NormalisableRange<float> {0.1f, 1.0f, 0.1f}, 1.0f));
-    //Release - set release to be up to 3 seconds long 
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("RELEASE", "Release", juce::NormalisableRange<float> {0.1f, 3.0f, 0.1f }, 0.4f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FMDEPTH", "FM Depth", juce::NormalisableRange<float> {0.0f, 1000.0f, 0.01f, 0.3f}, 500.0f));
 
     // Oscillator 1 selector 
     params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC1WAVETYPE", "Osc 1 Wave Type", juce::StringArray{ "Sine","Saw","Square" }, 0));
@@ -288,10 +278,21 @@ juce::AudioProcessorValueTreeState::ParameterLayout DepthAudioProcessor::createP
     // Oscillator 2 selector 
     params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC2WAVETYPE", "Osc 2 Wave Type", juce::StringArray{ "Sine","Saw","Square" }, 0));
 
+    // ADSR parameters
+    // Attack
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("ATTACK", "Attack", juce::NormalisableRange<float> {0.1f, 1.0f, 0.01f }, 0.1f));
+    // Decay 
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("DECAY", "Decay", juce::NormalisableRange<float> {0.1f, 1.0f, 0.01f}, 0.1f));
+    // Sustain - Default of 1 so that as long as the user is holding down the note it will continue to play
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN", "Sustain", juce::NormalisableRange<float> {0.1f, 1.0f, 0.01f}, 1.0f));
+    //Release - set release to be up to 3 seconds long 
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("RELEASE", "Release", juce::NormalisableRange<float> {0.1f, 3.0f, 0.01f }, 0.4f));
+
+    //Filter
     // Filter type selector 
     params.push_back(std::make_unique<juce::AudioParameterChoice>("FILTERTYPE", "Filter Type", juce::StringArray{ "Lowpass","Bandpass","Highpass" }, 0));
     //Filter cutoff between 10hz and 20,000 hz 
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERCUTOFF", "Filter Cutoff", juce::NormalisableRange<float> {10.0f, 20000.0f, 0.1f, 0.65f }, 300.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERCUTOFF", "Filter Cutoff", juce::NormalisableRange<float> {10.0f, 20000.0f, 0.1f, 0.5f }, 300.0f));
     //Filter Resonance
     params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERRES", "Filter Resonance", juce::NormalisableRange<float> {1.0f, 10.0f, 0.1f}, 1.0f));
 

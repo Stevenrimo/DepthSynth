@@ -18,15 +18,7 @@ void OscData::prepareToPlay(juce::dsp::ProcessSpec& spec)
 
 void OscData::getNextAudioBlock(juce::dsp::AudioBlock<float>& block)
 {
-    // Does our FM Proccesing bu going throught the number of channels and samples 
-    for (int ch = 0; ch < block.getNumChannels(); ch++)
-    {
-        for (int s = 0; s < block.getNumSamples(); s++)
-        {
-            // sets fmModulation value to be the current sample 
-            fmMod = fmOsc.processSample(block.getSample(ch, s)); 
-        }
-    }
+    processFMOsc(block);
     process(juce::dsp::ProcessContextReplacing<float>(block));
 }
 
@@ -68,7 +60,26 @@ void OscData::setWaveType(const int choice)
 
 void OscData::setFMParams(const float depth, const float freq)
 {
+    // Sets the FM paramters
     fmOsc.setFrequency(freq);
     fmDepth = depth;
-    setFrequency(juce::MidiMessage::getMidiNoteInHertz(lastMidiNote) + fmMod);
+
+    // Gets the current freq with fmModulation applied to  it
+    auto currentFreq = juce::MidiMessage::getMidiNoteInHertz(lastMidiNote) + fmMod;
+
+    // If the current Freq after applying modulation is negative we are multiplying it by -1 to make it positive 
+    // If we dont do this we will get an error 
+    setFrequency(currentFreq >= 0 ? currentFreq : currentFreq * -1.0f);
+}
+
+void OscData::processFMOsc(juce::dsp::AudioBlock<float>& block)
+{
+    // Applies our FM  synthesis by going through each channel and sample 
+    for (int ch = 0; ch < block.getNumChannels(); ch++)
+    {
+        for (int s = 0; s < block.getNumSamples(); s++)
+        {
+            fmMod = fmOsc.processSample(block.getSample(ch, s)) * fmDepth;
+        }
+    }
 }

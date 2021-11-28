@@ -20,6 +20,7 @@ public:
     void setWaveFrequency(const int midiNoteNumber);
     void setWaveType(const int choice);
     void setFMParams(const float depth, const float freq);
+    void processFMOsc(juce::dsp::AudioBlock<float>& block);
 
 
 private:
