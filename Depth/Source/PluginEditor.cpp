@@ -11,7 +11,7 @@
 
 //==============================================================================
 DepthAudioProcessorEditor::DepthAudioProcessorEditor (DepthAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p),osc(audioProcessor.apvts, "OSC1WAVETYPE","FMFREQ","FMDEPTH"), adsr(audioProcessor.apvts), filter(audioProcessor.apvts, "FILTERTYPE")
+    : AudioProcessorEditor (&p), audioProcessor (p),osc(audioProcessor.apvts, "OSC1WAVETYPE","FMOSCWAVETYPE","FMFREQ","FMDEPTH"), adsr(audioProcessor.apvts), filter(audioProcessor.apvts, "FILTERTYPE")
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.

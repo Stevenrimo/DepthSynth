@@ -58,6 +58,35 @@ void OscData::setWaveType(const int choice)
     }
 }
 
+void OscData::setFMWaveType(const int choice)
+{
+    //return std::sin(x);       //sine wave
+//return x / juce::mathconstants<float>::pi; //saw wave
+//return x < 0.0f ? -1 : 1.0f; //square wave
+
+    switch (choice)
+    {
+        //sine wave
+    case 0:
+        fmOsc.initialise([](float x) {return std::sin(x); });
+        break;
+
+        //Saw wave
+    case 1:
+        fmOsc.initialise([](float x) {return x / juce::MathConstants<float>::pi; });
+        break;
+
+        //square wave
+    case 2:
+        fmOsc.initialise([](float x) {return x < 0.0f ? -1 : 1.0f; });
+        break;
+
+    default:
+        jassertfalse;
+        break;
+    }
+}
+
 void OscData::setFMParams(const float depth, const float freq)
 {
     // Sets the FM paramters
@@ -83,3 +112,8 @@ void OscData::processFMOsc(juce::dsp::AudioBlock<float>& block)
         }
     }
 }
+
+//juce::dsp::Oscillator<float> OscData::getFmOsc()
+//{
+//    return fmOsc;
+//}

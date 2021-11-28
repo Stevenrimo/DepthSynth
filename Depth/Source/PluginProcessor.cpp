@@ -176,7 +176,7 @@ void DepthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
 
                 // gets the wave type of the oscillator 1 
                 auto& rOsc1WaveType = *apvts.getRawParameterValue("OSC1WAVETYPE");
-               // auto& rOsc2WaveType = *apvts.getRawParameterValue("OSC2WAVETYPE");
+                auto& rFMWaveType = *apvts.getRawParameterValue("FMOSCWAVETYPE");
 
                 // gets the paramters for FM
                 auto& rDepth = *apvts.getRawParameterValue("FMDEPTH");
@@ -184,7 +184,7 @@ void DepthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
 
                 // updates the oscillator class to use the selected wave type
                 voice->getOscillator().setWaveType(rOsc1WaveType);
-               // voice->getOscillator().setWaveType(rOsc2WaveType);
+                voice->getOscillator().setFMWaveType(rFMWaveType);
                 // updates the FM parameters
                 voice->getOscillator().setFMParams(rDepth, rFreq);
                 // updates the adsr with the current values from the valueTree, useing load because the floats are atomic floats and this saves time 
@@ -270,13 +270,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout DepthAudioProcessor::createP
     // FM frequency 
     params.push_back(std::make_unique<juce::AudioParameterFloat>("FMFREQ", "FM Frequency", juce::NormalisableRange<float> {0.0f, 1000.0f, 0.01f, 0.3f}, 0.0f));
     // FM Depth 
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("FMDEPTH", "FM Depth", juce::NormalisableRange<float> {0.0f, 1000.0f, 0.01f, 0.3f}, 500.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FMDEPTH", "FM Depth", juce::NormalisableRange<float> {0.0f, 1000.0f, 0.01f, 0.3f}, 0.0f));
 
     // Oscillator 1 selector 
     params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC1WAVETYPE", "Osc 1 Wave Type", juce::StringArray{ "Sine","Saw","Square" }, 0));
 
-    // Oscillator 2 selector 
-    params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC2WAVETYPE", "Osc 2 Wave Type", juce::StringArray{ "Sine","Saw","Square" }, 0));
+    // FM selector 
+    params.push_back(std::make_unique<juce::AudioParameterChoice>("FMOSCWAVETYPE", "FM Wave Type", juce::StringArray{ "Sine","Saw","Square" }, 0));
 
     // ADSR parameters
     // Attack
@@ -292,7 +292,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout DepthAudioProcessor::createP
     // Filter type selector 
     params.push_back(std::make_unique<juce::AudioParameterChoice>("FILTERTYPE", "Filter Type", juce::StringArray{ "Lowpass","Bandpass","Highpass" }, 0));
     //Filter cutoff between 10hz and 20,000 hz 
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERCUTOFF", "Filter Cutoff", juce::NormalisableRange<float> {10.0f, 20000.0f, 0.1f, 0.5f }, 300.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERCUTOFF", "Filter Cutoff", juce::NormalisableRange<float> {10.0f, 20000.0f, 0.1f, 0.5f }, 16000.0f));
     //Filter Resonance
     params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERRES", "Filter Resonance", juce::NormalisableRange<float> {1.0f, 10.0f, 0.1f}, 1.0f));
 

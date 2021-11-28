@@ -19,13 +19,17 @@ public:
     void getNextAudioBlock(juce::dsp::AudioBlock<float>& block);
     void setWaveFrequency(const int midiNoteNumber);
     void setWaveType(const int choice);
+    void setFMWaveType(const int choice);
     void setFMParams(const float depth, const float freq);
     void processFMOsc(juce::dsp::AudioBlock<float>& block);
+    //juce::dsp::Oscillator<float> getFmOsc();
+    
 
 
 private:
     // Init of FM oscillator, hard coded to sine for now TODO add customizablity 
-    juce::dsp::Oscillator<float> fmOsc{ [](float x) {return std::sin(x); } };
+    // { [](float x) {return std::sin(x); } }
+    juce::dsp::Oscillator<float> fmOsc;
     // usied to change the frequencey via fm
     float fmMod; 
     // FM depth esstenially controls the gain, or the amount of FM that we are using

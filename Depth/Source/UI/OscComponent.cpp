@@ -12,7 +12,7 @@
 #include "OscComponent.h"
 
 //==============================================================================
-OscComponent::OscComponent(juce::AudioProcessorValueTreeState& rApvts, juce::String sWaveSelectorId, juce::String fmFreqID, juce::String fmDepthID)
+OscComponent::OscComponent(juce::AudioProcessorValueTreeState& rApvts, juce::String sWaveSelectorId, juce::String sFMSelectorID, juce::String fmFreqID, juce::String fmDepthID)
 {
     // Defines the choices in the combobox
     juce::StringArray choice{ "Sine", "Saw", "Square" };
@@ -21,8 +21,14 @@ OscComponent::OscComponent(juce::AudioProcessorValueTreeState& rApvts, juce::Str
     // Makes combobox for oscialltor selector visable
     addAndMakeVisible(oscWaveSelector);
 
+    juce::StringArray fmChoice{ "Sine", "Saw", "Square" };
+    fmWaveSelector.addItemList(fmChoice, 1);
+    fmWaveSelector.setSelectedItemIndex(0);
+    addAndMakeVisible(fmWaveSelector);
+
     // Connects the front of what the user sees to the backend Data 
     oscSelectorAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(rApvts, sWaveSelectorId, oscWaveSelector);
+    fmOscSelectorAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(rApvts, sFMSelectorID, fmWaveSelector);
 
     // Connects knob to valueTreeState so that we can actually manipulate the data
     fmFreqSliderAttachment = std::make_unique< juce::AudioProcessorValueTreeState::SliderAttachment>(rApvts, fmFreqID, fmFreqSlider);
@@ -47,7 +53,8 @@ void OscComponent::paint (juce::Graphics& g)
     g.setFont(juce::Font("High Tower Text", 20.0f, juce::Font::bold));
     // TODO place at top of the combobox
     g.setColour(juce::Colours::white);
-    g.drawText("Oscillator 1",10,15,100,25, false);
+    g.drawText("Oscillator",10,15,100,25, false);
+    g.drawText("FM Wave Type", 190, 15, 125, 25, false);
 }
 
 void OscComponent::resized()
@@ -60,10 +67,11 @@ void OscComponent::resized()
     //If these elements are changed it will efffect all osc Selectors 
     const auto comboBoxStartX = 0 + padding;
     const auto comboBoxStartY = 40 + padding;
-    const auto comboBoxWidth = 200;//bounds.getWidth() / 4 - padding;
+    const auto comboBoxWidth = 150;//bounds.getWidth() / 4 - padding;
     const auto comboBoxHeight = 20;//bounds.getHeight() / 4 - padding;
     // sets position of osc selector 
     oscWaveSelector.setBounds(comboBoxStartX, comboBoxStartY, comboBoxWidth, comboBoxHeight);
+    fmWaveSelector.setBounds(oscWaveSelector.getWidth() + 40, comboBoxStartY, comboBoxWidth, comboBoxHeight);
 
     //Draws the FmFrequency slider
     fmFreqSlider.setBounds(0, 100, 100, 90);
