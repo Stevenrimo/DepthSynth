@@ -29,10 +29,10 @@ FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& rApvts, juc
     filResAttachment = std::make_unique<SliderAttachment>(rApvts, "FILTERRES", filterResSlider);
 
     std::string sFilterCutoff = "Hz";
-    setSliderParams(filterCutoffSlider, sFilterCutoff);
+    setSliderParams(filterCutoffSlider, sFilterCutoff, filterCutoffLabel);
 
-    std::string sFilterRes = "%";
-    setSliderParams(filterResSlider, sFilterRes);
+    std::string sFilterRes = "";
+    setSliderParams(filterResSlider, sFilterRes, filterResLabel);
 }
 
 FilterComponent::~FilterComponent()
@@ -57,13 +57,13 @@ void FilterComponent::resized()
     const auto padding = 10;
 
     //If these elements are changed it will efffect all slider elements 
-    const auto sliderWidth = bounds.getWidth() / 4 - padding;
-    const auto sliderHeight = bounds.getHeight() / 3.5 - padding;
+    const auto sliderWidth = 100;//bounds.getWidth() / 4 - padding;
+    const auto sliderHeight = 90;//bounds.getHeight() / 3.5 - padding;
     const auto sliderStartX = 0;
     const auto sliderStartY = 100;
 
     //sets postition of filter type selector 
-    filterTypeSelector.setBounds(padding, 50, 100, 20);
+    filterTypeSelector.setBounds(padding, 50, 150, 20);
 
     // Creates the Bounds of the sliders
     filterCutoffSlider.setBounds(sliderStartX, sliderStartY, sliderWidth, sliderHeight);
@@ -71,7 +71,7 @@ void FilterComponent::resized()
 
 }
 
-void FilterComponent::setSliderParams(juce::Slider& rSlider, std::string& rKnob)
+void FilterComponent::setSliderParams(juce::Slider& rSlider, std::string& rKnob, juce::Label& rLabel)
 {
     rSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     rSlider.setColour(juce::Slider::ColourIds::rotarySliderFillColourId, juce::Colours::forestgreen);
@@ -81,4 +81,9 @@ void FilterComponent::setSliderParams(juce::Slider& rSlider, std::string& rKnob)
     //rSlider.setHelpText(rKnob);
     rSlider.setTextValueSuffix(rKnob);
     addAndMakeVisible(rSlider);
+    // Displays the label for the slider
+    rLabel.setColour(juce::Label::ColourIds::textColourId, juce::Colours::white);
+    rLabel.setFont(juce::Font("High Tower Text", 14.0f, juce::Font::bold));
+    rLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(rLabel);
 }

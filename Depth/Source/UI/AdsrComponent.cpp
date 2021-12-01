@@ -12,16 +12,17 @@
 #include "AdsrComponent.h"
 
 //==============================================================================
-AdsrComponent::AdsrComponent(juce::AudioProcessorValueTreeState& rApvts)
+AdsrComponent::AdsrComponent(juce::String sName, juce::AudioProcessorValueTreeState& rApvts, juce::String sAttackId, juce::String sDecayId, juce::String sSustainId, juce::String sReleaseId)
 {
+    componentName = sName;
     // Only needs access to apvts instead of whole audio proccessor for encapsulation reasons (should give more data than is needed)
     // Instanciates the GUI attachment elements for the ADSR and oscilator selector
     using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
 
-    attackAttachment = std::make_unique<SliderAttachment>(rApvts, "ATTACK", attackSlider);
-    decayAttachment = std::make_unique<SliderAttachment>(rApvts, "DECAY", decaySlider);
-    sustainAttachment = std::make_unique<SliderAttachment>(rApvts, "SUSTAIN", sustainSlider);
-    releaseAttachment = std::make_unique<SliderAttachment>(rApvts, "RELEASE", releaseSlider);
+    attackAttachment = std::make_unique<SliderAttachment>(rApvts, sAttackId, attackSlider);
+    decayAttachment = std::make_unique<SliderAttachment>(rApvts, sDecayId, decaySlider);
+    sustainAttachment = std::make_unique<SliderAttachment>(rApvts, sSustainId, sustainSlider);
+    releaseAttachment = std::make_unique<SliderAttachment>(rApvts, sReleaseId, releaseSlider);
 
     // Creates the sliders on the GUI Interface
     juce::String sAttack = "Attack";
@@ -47,7 +48,7 @@ void AdsrComponent::paint (juce::Graphics& g)
     g.setFont(juce::Font("High Tower Text", 20.0f, juce::Font::bold));
     // TODO place at top of the combobox
     g.setColour(juce::Colours::white);
-    g.drawText("Envelope", 10, 215, 100, 25, false);
+    g.drawText(componentName, 10, 215, 200, 25, false);
     // setting the font to be smaller for slider labels
     g.setFont(juce::Font("High Tower Text", 15.0f, juce::Font::bold));
     g.drawText("Attack", 25, 240, 50, 50, false);

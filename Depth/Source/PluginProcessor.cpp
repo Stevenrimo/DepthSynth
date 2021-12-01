@@ -106,11 +106,8 @@ void DepthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
         if (auto voice = dynamic_cast<SynthVoice*>(synth.getVoice(i)))
         {
             voice->prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
-            
         }
     }
-    // prepares the filter to play 
-    filter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
 }
 
 void DepthAudioProcessor::releaseResources()
@@ -165,15 +162,7 @@ void DepthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
             // checks to see if the voice can be cased into a SynthVoice
             if (auto voice = dynamic_cast<SynthVoice*>(synth.getVoice(i)))
             {
-
-                // TODO Osc controls
-                // ADSR
-                // uses the identifier of the value tree states to get the Raw (Atomic Float) value of the ADSR 
-                auto& rAttack = *apvts.getRawParameterValue("ATTACK");
-                auto& rDecay = *apvts.getRawParameterValue("DECAY");
-                auto& rSustain = *apvts.getRawParameterValue("SUSTAIN");
-                auto& rRelease = *apvts.getRawParameterValue("RELEASE");
-
+                // Oscillator
                 // gets the wave type of the oscillator 1 
                 auto& rOsc1WaveType = *apvts.getRawParameterValue("OSC1WAVETYPE");
                 auto& rFMWaveType = *apvts.getRawParameterValue("FMOSCWAVETYPE");
@@ -182,15 +171,37 @@ void DepthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
                 auto& rDepth = *apvts.getRawParameterValue("FMDEPTH");
                 auto& rFreq = *apvts.getRawParameterValue("FMFREQ");
 
+                // ADSR
+                // uses the identifier of the value tree states to get the Raw (Atomic Float) value of the ADSR 
+                auto& rAttack = *apvts.getRawParameterValue("ATTACK");
+                auto& rDecay = *apvts.getRawParameterValue("DECAY");
+                auto& rSustain = *apvts.getRawParameterValue("SUSTAIN");
+                auto& rRelease = *apvts.getRawParameterValue("RELEASE");
+
+                // Filter sound processing
+                // loads all updated filter parameters to be passed into filter
+                auto& rFilterType = *apvts.getRawParameterValue("FILTERTYPE");
+                auto& rFilterCutoff = *apvts.getRawParameterValue("FILTERCUTOFF");
+                auto& rFilterRes = *apvts.getRawParameterValue("FILTERRES");
+
+                // Filter MOD
+                // uses the identifier of the value tree states to get the Raw (Atomic Float) value of the ADSR 
+                auto& rModAttack = *apvts.getRawParameterValue("MODATTACK");
+                auto& rModDecay = *apvts.getRawParameterValue("MODDECAY");
+                auto& rModSustain = *apvts.getRawParameterValue("MODSUSTAIN");
+                auto& rModRelease = *apvts.getRawParameterValue("MODRELEASE");
+
                 // updates the oscillator class to use the selected wave type
                 voice->getOscillator().setWaveType(rOsc1WaveType);
                 voice->getOscillator().setFMWaveType(rFMWaveType);
                 // updates the FM parameters
                 voice->getOscillator().setFMParams(rDepth, rFreq);
                 // updates the adsr with the current values from the valueTree, useing load because the floats are atomic floats and this saves time 
-                voice->getAdsr().updateADSR(rAttack.load(), rDecay.load(), rSustain.load(), rRelease.load());
-
-                //TODO LFO
+                voice->updateADSR(rAttack.load(), rDecay.load(), rSustain.load(), rRelease.load());
+                // updates the filter
+                voice->updateFilter(rFilterType.load(), rFilterCutoff.load(), rFilterRes.load());
+                // updates the filter modulation paramteres
+                voice->updateModAdsr(rModAttack.load(), rModDecay.load(), rModSustain.load(), rModRelease.load());
             }
         }
     }
@@ -205,16 +216,6 @@ void DepthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
 
     //calls the render voices method, to iterate through the voices 
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
-
-    // Filters sound processing
-    // loads all updated filter parameters to be passed into filter
-    auto& rFilterType = *apvts.getRawParameterValue("FILTERTYPE");
-    auto& rFilterCutoff = *apvts.getRawParameterValue("FILTERCUTOFF");
-    auto& rFilterRes = *apvts.getRawParameterValue("FILTERRES");
-    // updates teh filter parameters
-    filter.updateParameters(rFilterType, rFilterCutoff, rFilterRes);
-    // applies the filter paramters to the audio inside the current buffer
-    filter.process(buffer); 
 }
 
 //==============================================================================
@@ -295,6 +296,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout DepthAudioProcessor::createP
     params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERCUTOFF", "Filter Cutoff", juce::NormalisableRange<float> {10.0f, 20000.0f, 0.1f, 0.5f }, 16000.0f));
     //Filter Resonance
     params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERRES", "Filter Resonance", juce::NormalisableRange<float> {1.0f, 10.0f, 0.1f}, 1.0f));
+
+    // Filter ADSR parameters
+    // Attack
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("MODATTACK", "Mod Attack", juce::NormalisableRange<float> {0.1f, 1.0f, 0.01f }, 0.1f));
+    // Decay 
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("MODDECAY", "Mod Decay", juce::NormalisableRange<float> {0.1f, 1.0f, 0.01f}, 0.1f));
+    // Sustain - Default of 1 so that as long as the user is holding down the note it will continue to play
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("MODSUSTAIN", "Mod Sustain", juce::NormalisableRange<float> {0.1f, 1.0f, 0.01f}, 1.0f));
+    //Release - set release to be up to 3 seconds long 
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("MODRELEASE", "Mod Release", juce::NormalisableRange<float> {0.1f, 3.0f, 0.01f }, 0.4f));
 
     return { params.begin(), params.end() };
 }

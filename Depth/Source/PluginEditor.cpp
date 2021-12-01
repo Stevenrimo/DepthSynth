@@ -11,7 +11,12 @@
 
 //==============================================================================
 DepthAudioProcessorEditor::DepthAudioProcessorEditor (DepthAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p),osc(audioProcessor.apvts, "OSC1WAVETYPE","FMOSCWAVETYPE","FMFREQ","FMDEPTH"), adsr(audioProcessor.apvts), filter(audioProcessor.apvts, "FILTERTYPE")
+    : AudioProcessorEditor (&p), 
+    audioProcessor (p),
+    osc(audioProcessor.apvts, "OSC1WAVETYPE","FMOSCWAVETYPE","FMFREQ","FMDEPTH"), 
+    adsr("Envelope", audioProcessor.apvts, "ATTACK", "DECAY", "SUSTAIN","RELEASE"),
+    filter(audioProcessor.apvts, "FILTERTYPE"),
+    modAdsr("Modulation Envelope", audioProcessor.apvts, "MODATTACK", "MODDECAY","MODSUSTAIN","MODRELEASE")
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -23,8 +28,12 @@ DepthAudioProcessorEditor::DepthAudioProcessorEditor (DepthAudioProcessor& p)
     // make osc1 selector 
     addAndMakeVisible(osc);
 
+    // make mod envelope visable
+    addAndMakeVisible(modAdsr);
+
     //make filter visable
     addAndMakeVisible(filter);
+
 }
 
 DepthAudioProcessorEditor::~DepthAudioProcessorEditor()
@@ -50,9 +59,10 @@ void DepthAudioProcessorEditor::resized()
     adsr.setBounds(0, 0, getWidth() / 2, getHeight());
     // sets osc bounds
     osc.setBounds(0, 0, getWidth() / 2, getHeight()/2);
+    // sets mod adsr bounds
+    modAdsr.setBounds(400, 0, getWidth() / 2, getHeight());
     // sets filters bounds
-    filter.setBounds(400, 0, getWidth() / 2, getHeight());
-
+    filter.setBounds(400, 0, getWidth() / 2, getHeight()/2);
 }
 
 

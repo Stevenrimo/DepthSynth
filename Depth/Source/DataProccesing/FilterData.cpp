@@ -48,7 +48,7 @@ void FilterData::reset()
     filter.reset();
 }
 
-void FilterData::updateParameters(const int nFilterType, const float fFrequency, const float fResonance)
+void FilterData::updateParameters(const int nFilterType, const float fFrequency, const float fResonance, const float fModulator)
 {
     // based on the value that is passed in it will make the filter either a lowpass, highpass or bandpass
     switch (nFilterType)
@@ -66,8 +66,15 @@ void FilterData::updateParameters(const int nFilterType, const float fFrequency,
         break;
     }
 
+    // Takes modulator value and multiple by our frequecny to get modulated frequnecy 
+    float fModFreq = fFrequency * fModulator;
+    // if the modulated frequency is below 20hz we will set it to 20hz
+    fModFreq = std::fmax(fModFreq, 20.0f);              // returns max of the two values
+    // if the modulated frequency is above 20,000 hz we will set it to 20,000hz
+    fModFreq = std::fmin(fModFreq, 20000.0f);           // returns the min of two values
+
     // Sets the cutoff frequency 
-    filter.setCutoffFrequency(fFrequency);
+    filter.setCutoffFrequency(fModFreq);
 
     // Sets teh resonance of the filter 
     filter.setResonance(fResonance);

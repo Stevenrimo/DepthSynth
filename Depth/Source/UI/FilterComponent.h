@@ -26,12 +26,16 @@ public:
     
 
 private:
-    void setSliderParams(juce::Slider&, std::string& rKnob);
+    void setSliderParams(juce::Slider&, std::string& rKnob, juce::Label& rLabel);
 
     // UI components 
     juce::Slider filterCutoffSlider;
     juce::Slider filterResSlider;
     juce::ComboBox filterTypeSelector;
+
+    // Labels for knobs
+    juce::Label filterCutoffLabel{ "Cutoff", "Cutoff" };
+    juce::Label filterResLabel{ "Resonance", "Resonance" };
 
     // unique pointer that attachs the UI element to the valueTreeState
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filCutoffAttachment;

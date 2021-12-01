@@ -2,7 +2,8 @@
 
 <JUCERPROJECT id="ykf40T" name="Depth" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
-              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
+              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              pluginManufacturer="Steven Rimoli" pluginDesc="Depth">
   <MAINGROUP id="Q5jNtk" name="Depth">
     <GROUP id="{45E5944D-01C4-542D-0109-5B886860C2D5}" name="Source">
       <FILE id="drxG1E" name="Common.h" compile="0" resource="0" file="Source/Common.h"/>

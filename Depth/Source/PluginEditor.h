@@ -37,6 +37,8 @@ private:
     AdsrComponent adsr;
     // Instance of our internal filterComponent UI class
     FilterComponent filter;
+    // Instance of ADSR for modulation fucnitons
+    AdsrComponent modAdsr;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DepthAudioProcessorEditor)
 };

@@ -27,20 +27,24 @@ public:
     void controllerMoved(int controllerNumber, int newControllerValue) override;
     void renderNextBlock(juce::AudioBuffer< float >& outputBuffer, int startSample, int numSamples) override;
     void prepareToPlay(double sampleRate, int samplesPerBlock,int outputChannels);
-    void update(const float attack, const float decay, const float sustain, const float release);
+    void updateADSR(const float attack, const float decay, const float sustain, const float release);
+    void updateFilter(const int filterType, const float cutoff, const float resonance);
+    void updateModAdsr(const float attack, const float decay, const float sustain, const float release);
     OscData& getOscillator() { return osc1; }
-    AdsrData& getAdsr() { return adsr; }
+    //AdsrData& getAdsr() { return adsr; }
 
 private:
-    // Instance of user made classes 
-    AdsrData adsr;
-    FilterData filter;
-    OscData osc1;
-    OscData FMosc;
     // Need to make a second audio buffer to load the synth data into instead of using the output buffer directly
     // By using this synth buffer we are able to remove an issue that cause a clicking sound when a MIDI was pressed 
     juce::AudioBuffer<float> synthBuffer;
 
+    // Instance of user made classes 
+    OscData osc1;
+    AdsrData adsr;
+    FilterData filter;
+    AdsrData modAdsr;
+
+    // Gain level of the output 
     juce::dsp::Gain<float> gain;
 
     //check to see that our audio callback has been created 
